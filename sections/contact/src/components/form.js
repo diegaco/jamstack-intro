@@ -6,7 +6,8 @@ const INITIAL_STATE = {
   email: '',
   subject: '',
   message: '',
-  status: 'ERROR'
+  // status: 'ERROR'
+  status: 'IDLE'
 };
 
 const reducer = (state, {type, field, payload}) => {
@@ -15,6 +16,8 @@ const reducer = (state, {type, field, payload}) => {
       return { ...state, [field]: payload };
     case 'updateStatus':
       return { ...state, status: payload}
+    case 'reset':
+      return INITIAL_STATE;
     default:
       return INITIAL_STATE;
   }
@@ -23,10 +26,27 @@ const reducer = (state, {type, field, payload}) => {
 export default () => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
+  const setStatus = status => dispatch({ type: 'updateStatus', payload: status });
+
   const handleSubmit = (ev) => {
     ev.preventDefault();
-    console.log(ev);
+    setStatus('PENDING');
+
+    fetch('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify(state)
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        setStatus('SUCCESS');
+      })
+      .catch(err => {
+        console.log(err)
+        setStatus('ERROR');
+      });
   }
+
 
   // Traditional Way
   // const handleChange = (ev) => {
@@ -39,11 +59,18 @@ export default () => {
     dispatch({type: 'updateFieldValue', field, payload: ev.target.value})
   }
 
-  if (state.status === 'SUCESS') {
+  if (state.status === 'SUCCESS') {
     return (
-      <p className={styles.success}>
-        Message was sent
-      </p>
+        <p className={styles.success}>
+          Message was sent
+          <button
+            type="reset"
+            onClick={() => dispatch({ type: 'reset' })}
+            className={`${styles.button} ${styles.centered}`}
+          >
+            Reset
+          </button>
+        </p>
     )
   }
 
