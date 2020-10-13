@@ -2,9 +2,9 @@ import React from 'react';
 
 const RouteBase = () => {
   return (
-    <div>
-      All your base are belong ti us
-    </div>
+    <h1>
+      All your base are belong to us
+    </h1>
   );
 };
 
