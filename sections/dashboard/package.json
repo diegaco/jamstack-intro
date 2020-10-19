@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "npm run build"
+    "build": "gatsby build"
   },
   "dependencies": {
     "@reach/dialog": "^0.11.2",
